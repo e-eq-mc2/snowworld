@@ -11,12 +11,9 @@ export class Snow {
     this.sprite = new THREE.Sprite(material)
 
     this.position = new THREE.Vector3(
-      0,
-      0,
-      0,
-      //Math.random() * 2000 - 1000,
-      //Math.random() * 2000 - 1000,
-      //Math.random() * 2000 - 1000
+      Math.random() * 2000 - 1000,
+      Math.random() * 2000 - 1000,
+      Math.random() * 2000 - 1000
     )
 
     this.sprite.position.set(

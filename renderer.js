@@ -15,14 +15,15 @@ let windowHalfY   = window.innerHeight / 2
 
 const container = document.body
 
-let renderer, scene, camera
+let renderer, scene, camera, stats
 
 let mouseX = 0
 let mouseY = 0
 
 let particles = []; 
 
-window.addEventListener( 'load', init );
+init()
+animate()
 
 function init() {
   renderer = new THREE.WebGLRenderer( { antialias: true } );
@@ -44,7 +45,7 @@ function init() {
     //map: new THREE.Texture(particleImage) 
   } );
 		
-	for (var i = 0; i < 1000; i++) {
+	for (var i = 0; i < 3000; i++) {
 
 		const particle = new Snow( material )
 		scene.add( particle.sprite );
@@ -57,8 +58,11 @@ function init() {
 	document.addEventListener( 'mousemove', onDocumentMouseMove, false );
 	document.addEventListener( 'touchstart', onDocumentTouchStart, false );
 	document.addEventListener( 'touchmove', onDocumentTouchMove, false );
-	
-	setInterval( loop, 1000 / 60 );
+  window.addEventListener( 'resize', onWindowResize )
+
+  stats = new Stats();
+  document.body.appendChild( stats.dom );
+
 }
 
 function onDocumentMouseMove( event ) {
@@ -89,16 +93,26 @@ function onDocumentTouchMove( event ) {
 	}
 }
 
-function loop() {
+function onWindowResize() {
+
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+
+  renderer.setSize( window.innerWidth, window.innerHeight );
+
+}
+
+function animate() {
+  requestAnimationFrame( animate );
+  render();
+}
+
+function render() {
 
   for (let i = 0; i < particles.length; i++)	{
 
     const particle = particles[i]; 
     particle.updatePhysics(); 
-
-    //if ( i == 0  ) {
-    //  console.log(particle.sprite.position)
-    //}
 
     const p = particle.position
 
@@ -117,4 +131,5 @@ function loop() {
 	camera.lookAt(scene.position)
 
 	renderer.render(scene, camera)		
+  stats.update()
 }
