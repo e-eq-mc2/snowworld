@@ -1,5 +1,6 @@
 const THREE = require('three');
 const Common     = require("./lib/common.js")
+const Colormap   = require("./lib/colormap.js")
 
 // Particle3D class
 
@@ -12,8 +13,14 @@ export class Snow {
     this.rangeMin = rangeMin
     this.rangeMax = rangeMax
 
-    const positions = new Float32Array(this.num * 3)
 
+    this.colormap   = new Colormap('white')
+    this.colormap.setBlackRate(0.0)
+
+    const positions = new Float32Array(this.num * 3)
+    const colors    = new Float32Array(this.num * 3)
+
+    const color = new THREE.Color()
     for (let i = 0; i < this.num; i++) {
       const x = Common.randomReal(this.rangeMin, this.rangeMax) 
       const y = Common.randomReal(this.rangeMin, this.rangeMax)
@@ -22,21 +29,32 @@ export class Snow {
       positions[i * 3 + 0] = x
       positions[i * 3 + 1] = y
       positions[i * 3 + 2] = z
+
+      color.set( this.colormap.choose() )
+      const r = color.r
+      const g = color.g
+      const b = color.b
+
+      colors[i * 3 + 0] = r
+      colors[i * 3 + 1] = g
+      colors[i * 3 + 2] = b
     }
     const geometry = new THREE.BufferGeometry();
-    geometry.setAttribute( 'position', new THREE.BufferAttribute(positions, 3))
+    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3))
+    geometry.setAttribute(   'color', new THREE.BufferAttribute(   colors, 3))
 
+    //const fileName = `img/fish_10.png`
     const fileName = `img/snowflake.png`
     const texture  = new THREE.TextureLoader().load( fileName )
 
     const material = new THREE.PointsMaterial({
       color: 0xffffff, 
-      size: 20, 
+      size: 40, 
       map: texture, 
       transparent: true, 
-      //blending: THREE.AdditiveBlending, 
-      //depthTest: false, 
-      //transparent: true 
+      vertexColors: true,
+      blending: THREE.AdditiveBlending, 
+      depthTest: false, 
     });
 
 
@@ -47,7 +65,7 @@ export class Snow {
     this.drags      = []
 
     for (let i = 0; i < this.num; i++) {
-      const v = new THREE.Vector3(0, -8, 0)
+      const v = new THREE.Vector3(0, -2, 0)
       const g = new THREE.Vector3(0,0,0)
       const d = 1
 
@@ -61,13 +79,25 @@ export class Snow {
 
   }
 
-  changeColor(c) {
-    this.flakes.material.color.set(c)
+  changeColor() {
+    const colors = this.flakes.geometry.attributes.color.array
+
+    const color = new THREE.Color()
+    for (let i = 0; i < this.num; i++) {
+      color.set( this.colormap.choose() )
+      const r = color.r
+      const g = color.g
+      const b = color.b
+
+      colors[i * 3 + 0] = r
+      colors[i * 3 + 1] = g
+      colors[i * 3 + 2] = b
+    }
+
+    this.flakes.geometry.attributes.color.needsUpdate = true
   }
 
-  updatePhysics(color) {
-
-
+  updatePhysics() {
     const positions = this.flakes.geometry.attributes.position.array
 
     const range = this.rangeMax - this.rangeMin
@@ -100,7 +130,7 @@ export class Snow {
       positions[i * 3 + 2] = z 
     }
 
-    this.flakes.geometry.attributes.position.needsUpdate = true;
+    this.flakes.geometry.attributes.position.needsUpdate = true
   }
 
   rotateX(v, angle) {

@@ -3,10 +3,6 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import Stats from 'three/examples/jsm/libs/stats.module.js';
 import { Snow }  from  './snow.js'
 const Common = require("./lib/common.js")
-const Colormap   = require("./lib/colormap.js")
-
-const colormap   = new Colormap('white')
-colormap.setBlackRate(0.0)
 
 function randomRange(min, max) {
 	return ((Math.random()*(max-min)) + min); 
@@ -41,7 +37,7 @@ function init() {
 	camera.position.z = 2000
 	scene.add(camera);
 
-  snow= new Snow(10000, -2000, 2000)
+  snow= new Snow(6000, -2000, 2000)
   scene.add( snow.flakes )
 
 	container.appendChild( renderer.domElement );
@@ -52,13 +48,11 @@ function init() {
   window.addEventListener( 'resize', onWindowResize )
 
   stats = new Stats();
-  document.body.appendChild( stats.dom );
-
+  //document.body.appendChild( stats.dom );
 
   const controls = new OrbitControls( camera, renderer.domElement );
   //controls.target.set( 0, 10, 0 );
   controls.update();
-
 }
 
 function onDocumentMouseMove( event ) {
@@ -95,7 +89,6 @@ function onWindowResize() {
   camera.updateProjectionMatrix();
 
   renderer.setSize( window.innerWidth, window.innerHeight );
-
 }
 
 function animate() {
@@ -121,34 +114,34 @@ document.body.addEventListener("keydown", function(e) {
 
   switch(true) {
     case e.key == '0':
-      colormap.set('black')
+      snow.colormap.set('black')
       break
     case e.key == '1':
-      colormap.set('white')
+      snow.colormap.set('white')
       break
     case e.key == '2':
-      colormap.set('blue-black')
+      snow.colormap.set('blue-black')
       break
     case e.key == '3':
-      colormap.set('aqua-black')
+      snow.colormap.set('aqua-black')
       break
     case e.key == '4':
-      colormap.set('green-black')
+      snow.colormap.set('green-black')
       break
     case e.key == '5':
-      colormap.set('yellow-black')
+      snow.colormap.set('yellow-black')
       break
     case e.key == '6':
-      colormap.set('red-black')
+      snow.colormap.set('red-black')
       break
     case e.key == '7':
-      colormap.set('rose-black')
+      snow.colormap.set('rose-black')
       break
     case e.key == '8':
-      colormap.set('purple-black')
+      snow.colormap.set('purple-black')
       break
     case e.key == 'm':
-      colormap.set('mix-black')
+      snow.colormap.set('mix-black')
       break
     case e.key == 'p':
       window.api.send('竜とそばかすの姫_歌よ_Belle_中村佳穂.mp3', 'music')
@@ -156,20 +149,20 @@ document.body.addEventListener("keydown", function(e) {
 
     case e.key == "b":
       {
-        let b = Math.cbrt(colormap.getBlackRate())
+        let b = Math.cbrt(snow.colormap.getBlackRate())
         b += 0.1
         b = b ** 3
-        colormap.setBlackRate(b)
+        snow.colormap.setBlackRate(b)
       }
       break
 
     case e.key == "w":
       {
 
-        let b = Math.cbrt(colormap.getBlackRate())
+        let b = Math.cbrt(snow.colormap.getBlackRate())
         b -= 0.1
         b = b >= 0 ? b ** 3 : 0
-        colormap.setBlackRate(b)
+        snow.colormap.setBlackRate(b)
       }
       break
 
@@ -177,7 +170,8 @@ document.body.addEventListener("keydown", function(e) {
       break
   }
 
-  snow.changeColor(colormap.choose())
+  snow.changeColor()
+
 });
 
 
