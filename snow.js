@@ -10,8 +10,12 @@ export class Snow {
 
   constructor(num, rangeMin = -1000, rangeMax = 1000) {
     this.num = num
-    this.rangeMin = rangeMin
-    this.rangeMax = rangeMax
+    this.rangeMinX = rangeMin
+    this.rangeMaxX = rangeMax
+    this.rangeMinY = rangeMin/2
+    this.rangeMaxY = rangeMax/2
+    this.rangeMinZ = rangeMin/2
+    this.rangeMaxZ = rangeMax/2
 
 
     this.colormap   = new Colormap('white')
@@ -22,9 +26,9 @@ export class Snow {
 
     const color = new THREE.Color()
     for (let i = 0; i < this.num; i++) {
-      const x = Common.randomReal(this.rangeMin, this.rangeMax) 
-      const y = Common.randomReal(this.rangeMin, this.rangeMax)
-      const z = Common.randomReal(this.rangeMin, this.rangeMax)
+      const x = Common.randomReal(this.rangeMinX, this.rangeMaxX) 
+      const y = Common.randomReal(this.rangeMinY, this.rangeMaxY)
+      const z = Common.randomReal(this.rangeMinZ, this.rangeMaxZ)
 
       positions[i * 3 + 0] = x
       positions[i * 3 + 1] = y
@@ -100,7 +104,9 @@ export class Snow {
   updatePhysics() {
     const positions = this.flakes.geometry.attributes.position.array
 
-    const range = this.rangeMax - this.rangeMin
+    const rangeX = this.rangeMaxX - this.rangeMinX
+    const rangeY = this.rangeMaxY - this.rangeMinY
+    const rangeZ = this.rangeMaxZ - this.rangeMinZ
     for (let i = 0; i < this.num; i++) {
       const v = this.velocities[i]
       const g = this.gravities[i]
@@ -117,13 +123,13 @@ export class Snow {
       y += v.y
       z += v.z
 
-      if      ( y < this.rangeMin ) y += range
+      if      ( y < this.rangeMinY ) y += rangeY
 
-      if      ( x > this.rangeMax ) x -= range
-      else if ( x < this.rangeMin ) x += range
+      if      ( x > this.rangeMaxX ) x -= rangeX
+      else if ( x < this.rangeMinX ) x += rangeX
 
-      if      ( z > this.rangeMax ) z -= range
-      else if ( z < this.rangeMin ) z += range
+      if      ( z > this.rangeMaxZ ) z -= rangeZ
+      else if ( z < this.rangeMinZ ) z += rangeZ
 
       positions[i * 3 + 0] = x 
       positions[i * 3 + 1] = y 

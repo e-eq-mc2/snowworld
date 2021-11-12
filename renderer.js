@@ -8,10 +8,8 @@ function randomRange(min, max) {
 	return ((Math.random()*(max-min)) + min); 
 }
 
-let SCREEN_WIDTH  = window.innerWidth
-let SCREEN_HEIGHT = window.innerHeight
-let windowHalfX   = window.innerWidth / 2
-let windowHalfY   = window.innerHeight / 2
+//let SCREEN_WIDTH  = window.innerWidth
+//let SCREEN_HEIGHT = window.innerHeight
 
 const container = document.body
 
@@ -28,16 +26,24 @@ animate()
 function init() {
   renderer = new THREE.WebGLRenderer( { antialias: true } );
   renderer.setPixelRatio( window.devicePixelRatio );
-	renderer.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
-  container.appendChild( renderer.domElement );
+  renderer.setSize( window.innerWidth, window.innerHeight )
+  document.body.appendChild( renderer.domElement )
+	//renderer.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
+  //container.appendChild( renderer.domElement );
 
 	scene = new THREE.Scene();
 
-	camera = new THREE.PerspectiveCamera(90, SCREEN_WIDTH / SCREEN_HEIGHT, 1, 10000 );
+	camera = new THREE.PerspectiveCamera(
+    90, 
+    window.innerWidth / window.innerHeight,
+    1, 
+    10000 
+  );
+
 	camera.position.z = 2000
 	scene.add(camera);
 
-  snow= new Snow(6000, -2000, 2000)
+  snow= new Snow(10000, -5000, 5000)
   scene.add( snow.flakes )
 
 	container.appendChild( renderer.domElement );
@@ -67,7 +73,9 @@ function onDocumentTouchStart( event ) {
 
 		event.preventDefault();
 
-		mouseX = event.touches[ 0 ].pageX - windowHalfX;
+    const windowHalfX   = window.innerWidth / 2
+    const windowHalfY   = window.innerHeight / 2
+    mouseX = event.touches[ 0 ].pageX - windowHalfX;
 		mouseY = event.touches[ 0 ].pageY - windowHalfY;
 	}
 }
@@ -78,6 +86,8 @@ function onDocumentTouchMove( event ) {
 
 		event.preventDefault();
 
+    const windowHalfX   = window.innerWidth / 2
+    const windowHalfY   = window.innerHeight / 2
 		mouseX = event.touches[ 0 ].pageX - windowHalfX;
 		mouseY = event.touches[ 0 ].pageY - windowHalfY;
 	}

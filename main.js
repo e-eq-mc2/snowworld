@@ -29,8 +29,11 @@ function createWindow () {
 
   if ( isMac() ) mainWindow.setFullScreen(true)
 
+  // and load the index.html of the app.
+  mainWindow.loadFile('index.html')
+
   // Open the DevTools.
-  mainWindow.webContents.openDevTools()
+  //mainWindow.webContents.openDevTools()
 
   return mainWindow
 }
@@ -47,16 +50,6 @@ app.whenReady().then(() => {
     // On macOS it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
     if (BrowserWindow.getAllWindows().length === 0) createWindow()
-  })
-
-  win.webContents.on('did-finish-load', () => {
-    ipcMain.on('music', (event, data) => { 
-      const song = `./music/${data}`
-      music.run(song, (stdout) => {
-       event.reply('music', stdout)
-      })
-    })
-
   })
 
   globalShortcut.register('Ctrl+Q', function() {
